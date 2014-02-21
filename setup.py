@@ -13,7 +13,6 @@ setup_requires = [
 ]
 install_requires = [
     'straight.plugin==1.4.0',
-    'Twisted==13.2.0',
 ]
 
 if sys.version_info[0:2] == (2, 6):
