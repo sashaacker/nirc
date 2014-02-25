@@ -1,0 +1,2 @@
+class EventUndefinedError(Exception):
+    pass

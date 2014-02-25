@@ -14,6 +14,7 @@ install_requires = [
 
 if sys.version_info[0:2] == (2, 6):
     #install_requires.append('argparse==1.1')
+    pass
 
 setup(
     name="nirc",
