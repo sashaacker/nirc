@@ -6,18 +6,14 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-setup_requires = [
-    'nose==1.3.0',
-    'coverage==3.7.1',
-    'mock==1.0.1',
-]
 install_requires = [
     'straight.plugin==1.4.0',
+    'irc==8.5.4',
+    'six==1.5.2',
 ]
 
 if sys.version_info[0:2] == (2, 6):
     #install_requires.append('argparse==1.1')
-    setup_requires.append('unittest2==0.5.1')
 
 setup(
     name="nirc",
@@ -29,6 +25,4 @@ setup(
     packages=find_packages(),
     long_description=read('README.rst'),
     install_requires=install_requires,
-    setup_requires=setup_requires,
-    test_suite='nose.collector',
 )
