@@ -148,7 +148,6 @@ class ManagerTestCase(unittest.TestCase):
     def setUp(self):
         self.real = {
             'IRC': irc.client.IRC,
-            'Connection': nirc.core.Connection,
             'Dispatch': nirc.core.Dispatch,
         }
         self.IRC = irc.client.IRC = mock.MagicMock()
@@ -157,9 +156,6 @@ class ManagerTestCase(unittest.TestCase):
         self.IRC.server.return_value = self.IRC.server
         self.IRC.process_forever = mock.MagicMock()
         self.IRC.add_global_handler = mock.MagicMock()
-        self.Connection = nirc.core.Connection = mock.MagicMock()
-        self.Connection.return_value = self.Connection
-        self.Connection.server = self.IRC.server
         self.Dispatch = nirc.core.Dispatch = mock.MagicMock()
         self.Dispatch.return_value = self.Dispatch
         self.Dispatch.fire = mock.MagicMock()
@@ -167,12 +163,11 @@ class ManagerTestCase(unittest.TestCase):
 
     def tearDown(self):
         irc.client.IRC = self.real['IRC']
-        nirc.core.Connection = self.real['Connection']
         nirc.core.Dispatch = self.real['Dispatch']
 
     def test_initialized(self):
         self.IRC.assert_called_once_with()
-        self.assertEqual(self.manager.connections, {})
+        self.assertEqual(self.manager.connections, [])
         self.assertIs(self.manager.client, self.IRC)
         self.assertIs(self.manager.dispatch, self.Dispatch)
         self.IRC.add_global_handler.assert_called_once_with(
@@ -193,16 +188,8 @@ class ManagerTestCase(unittest.TestCase):
         self.manager.connection()
         self.assertEqual(
             self.manager.connections,
-            {self.Connection.server: self.Connection}
+            [self.IRC.server],
         )
-
-    def test_connection_calls_Connection(self):
-        self.manager.connection()
-        self.Connection.assert_called_once_with(self.IRC.server)
-
-    def test_connection_returns_Connection_object(self):
-        con = self.manager.connection()
-        self.assertIs(con, self.Connection)
 
     def test_handle_event_fires(self):
         con = self.manager.connection()

@@ -82,17 +82,13 @@ class Dispatch(object):
         return False
 
 
-class Connection(object):
-    pass
-
-
 class Manager(object):
     """
     I really dont like the dispatch methods in the core IRC library, so this
     entire framework exists to build a new dispatcher.
     """
     def __init__(self):
-        self.connections = {}
+        self.connections = []
         self.client = irc.client.IRC()
         self.dispatch = Dispatch()
         self.client.add_global_handler(
@@ -101,16 +97,14 @@ class Manager(object):
 
     def connection(self):
         s = self.client.server()
-        con = Connection(s)
-        self.connections[s] = con
-        return con
+        self.connections.append(s)
+        return s
 
     def run(self):
         self.client.process_forever()
 
-    def _default_handler(self, s_connection, event):
-        con = self.connections[s_connection]
+    def _default_handler(self, connection, event):
         try:
-            self.dispatch.fire(event.type, connection=con, event=event)
+            self.dispatch.fire(event.type, connection=connection, event=event)
         except EventUndefinedError:  # pragma: no cover
             pass
